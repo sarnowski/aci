@@ -1,11 +1,15 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class ContainerRuntimeManifest {
     private static final String MANIFEST_VERSION = "0.1.0";
@@ -36,7 +40,7 @@ public class ContainerRuntimeManifest {
     }
 
     public ContainerRuntimeManifest(final String uuid) {
-        if (uuid == null) throw new IllegalArgumentException("uuid not given");
+        checkArgument(!isNullOrEmpty(uuid), "container runtime manifest uuid required");
 
         this.uuid = uuid;
     }
@@ -76,7 +80,7 @@ public class ContainerRuntimeManifest {
 
     public Map<String, String> getAnnotations() {
         if (annotations == null) {
-            annotations = new HashMap<>();
+            annotations = Maps.newHashMap();
         }
         return annotations;
     }
@@ -100,10 +104,10 @@ public class ContainerRuntimeManifest {
 
     @Override
     public String toString() {
-        return "ContainerRuntimeManifest{" +
-                "acVersion='" + acVersion + '\'' +
-                ", acKind='" + acKind + '\'' +
-                ", uuid='" + uuid + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("acVersion", acVersion)
+                .add("acKind", acKind)
+                .add("uuid", uuid)
+                .toString();
     }
 }

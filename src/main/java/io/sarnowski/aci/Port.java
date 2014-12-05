@@ -1,6 +1,10 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class Port {
     @JsonProperty("name")
@@ -19,9 +23,9 @@ public class Port {
     }
 
     public Port(final String name, final String protocol, final int port) {
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (protocol == null) throw new IllegalArgumentException("protocol not given");
-        if (port < 0 || port > 65335) throw new IllegalArgumentException("invalid port");
+        checkArgument(!isNullOrEmpty(name), "port name required");
+        checkArgument(!isNullOrEmpty(protocol), "port protocol required");
+        checkArgument(port > 0 && port <= 65335, "port range invalid");
 
         this.name = name;
         this.protocol = protocol;
@@ -67,11 +71,11 @@ public class Port {
 
     @Override
     public String toString() {
-        return "Port{" +
-                "name='" + name + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", port=" + port +
-                ", socketActivated=" + socketActivated +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("protocol", protocol)
+                .add("port", port)
+                .add("socketActivated", socketActivated)
+                .toString();
     }
 }

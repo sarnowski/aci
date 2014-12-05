@@ -1,9 +1,13 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class Volume {
     @JsonProperty("kind")
@@ -22,7 +26,7 @@ public class Volume {
     }
 
     public Volume(final String kind) {
-        if (kind == null) throw new IllegalArgumentException("kind not given");
+        checkArgument(!isNullOrEmpty(kind), "volume kind required");
 
         this.kind = kind;
     }
@@ -56,11 +60,11 @@ public class Volume {
 
     @Override
     public String toString() {
-        return "Volume{" +
-                "kind='" + kind + '\'' +
-                ", source='" + source + '\'' +
-                ", readOnly=" + readOnly +
-                ", fulfills=" + fulfills +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("kind", kind)
+                .add("source", source)
+                .add("readOnly", readOnly)
+                .add("fulfills", fulfills)
+                .toString();
     }
 }

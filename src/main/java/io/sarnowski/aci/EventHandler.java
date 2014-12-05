@@ -1,9 +1,14 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class EventHandler {
     @JsonProperty("name")
@@ -16,8 +21,8 @@ public class EventHandler {
     }
 
     public EventHandler(final String name, final List<String> exec) {
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (exec == null) throw new IllegalArgumentException("exec not given");
+        checkArgument(!isNullOrEmpty(name), "event handler name required");
+        checkNotNull(exec, "event handler exec required");
 
         this.name = name;
         this.exec = exec;
@@ -53,9 +58,9 @@ public class EventHandler {
 
     @Override
     public String toString() {
-        return "EventHandler{" +
-                "name='" + name + '\'' +
-                ", exec=" + exec +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("exec", exec)
+                .toString();
     }
 }

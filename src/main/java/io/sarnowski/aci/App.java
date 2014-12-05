@@ -1,11 +1,15 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class App {
     @JsonProperty("name")
@@ -24,8 +28,8 @@ public class App {
     }
 
     public App(final String name, final String imageID) {
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (imageID == null) throw new IllegalArgumentException("imageID not given");
+        checkArgument(!isNullOrEmpty(name), "app name required");
+        checkArgument(!isNullOrEmpty(imageID), "app imageID required");
 
         this.name = name;
         this.imageID = imageID;
@@ -48,8 +52,33 @@ public class App {
 
     public Map<String, String> getAnnotations() {
         if (annotations == null) {
-            annotations = new HashMap<>();
+            annotations = Maps.newHashMap();
         }
         return annotations;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final App app = (App) o;
+
+        if (!name.equals(app.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("imageID", imageID)
+                .toString();
     }
 }

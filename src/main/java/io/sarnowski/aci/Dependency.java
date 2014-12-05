@@ -1,6 +1,10 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class Dependency {
     @JsonProperty("hash")
@@ -16,9 +20,9 @@ public class Dependency {
     }
 
     public Dependency(final String hash, final String name, final String root) {
-        if (hash == null) throw new IllegalArgumentException("hash not given");
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (root == null) throw new IllegalArgumentException("root not given");
+        checkArgument(!isNullOrEmpty(hash), "dependency hash required");
+        checkArgument(!isNullOrEmpty(name), "dependency name required");
+        checkArgument(!isNullOrEmpty(root), "dependency root required");
 
         this.hash = hash;
         this.name = name;
@@ -61,10 +65,10 @@ public class Dependency {
 
     @Override
     public String toString() {
-        return "Dependency{" +
-                "hash='" + hash + '\'' +
-                ", name='" + name + '\'' +
-                ", root='" + root + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("hash", hash)
+                .add("name", name)
+                .add("root", root)
+                .toString();
     }
 }

@@ -1,6 +1,10 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class Isolator {
     @JsonProperty("name")
@@ -13,8 +17,8 @@ public class Isolator {
     }
 
     public Isolator(final String name, final String val) {
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (val == null) throw new IllegalArgumentException("val not given");
+        checkArgument(!isNullOrEmpty(name), "isolator name required");
+        checkArgument(!isNullOrEmpty(val), "isolator val required");
 
         this.name = name;
         this.val = val;
@@ -47,9 +51,9 @@ public class Isolator {
 
     @Override
     public String toString() {
-        return "Isolator{" +
-                "name='" + name + '\'' +
-                ", val='" + val + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("val", val)
+                .toString();
     }
 }

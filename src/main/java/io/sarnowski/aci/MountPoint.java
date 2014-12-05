@@ -1,6 +1,10 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class MountPoint {
     @JsonProperty("name")
@@ -16,8 +20,8 @@ public class MountPoint {
     }
 
     public MountPoint(final String name, final String path) {
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (path == null) throw new IllegalArgumentException("path not given");
+        checkArgument(!isNullOrEmpty(name), "mount point name required");
+        checkArgument(!isNullOrEmpty(path), "mount point path required");
 
         this.name = name;
         this.path = path;
@@ -58,10 +62,10 @@ public class MountPoint {
 
     @Override
     public String toString() {
-        return "MountPoint{" +
-                "name='" + name + '\'' +
-                ", path='" + path + '\'' +
-                ", readOnly=" + readOnly +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("path", path)
+                .add("readOnly", readOnly)
+                .toString();
     }
 }

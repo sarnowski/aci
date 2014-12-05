@@ -1,9 +1,13 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class FilesetManifest {
     private static final String MANIFEST_VERSION = "0.1.0";
@@ -28,7 +32,7 @@ public class FilesetManifest {
     }
 
     public FilesetManifest(final String name) {
-        if (name == null) throw new IllegalArgumentException("name not given");
+        checkArgument(!isNullOrEmpty(name), "fileset manifest name required");
 
         this.name = name;
     }
@@ -83,10 +87,10 @@ public class FilesetManifest {
 
     @Override
     public String toString() {
-        return "FilesetManifest{" +
-                "acVersion='" + acVersion + '\'' +
-                ", acKind='" + acKind + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("acVersion", acVersion)
+                .add("acKind", acKind)
+                .add("name", name)
+                .toString();
     }
 }

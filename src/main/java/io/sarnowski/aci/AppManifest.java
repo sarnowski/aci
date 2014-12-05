@@ -1,11 +1,15 @@
 package io.sarnowski.aci;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class AppManifest {
     private static final String MANIFEST_VERSION = "0.1.0";
@@ -60,10 +64,10 @@ public class AppManifest {
     }
 
     public AppManifest(final String name, final String version, final String os, final String arch) {
-        if (name == null) throw new IllegalArgumentException("name not given");
-        if (version == null) throw new IllegalArgumentException("version not given");
-        if (os == null) throw new IllegalArgumentException("os not given");
-        if (arch == null) throw new IllegalArgumentException("arch not given");
+        checkArgument(!isNullOrEmpty(name), "app manifest name required");
+        checkArgument(!isNullOrEmpty(version), "app manifest version required");
+        checkArgument(!isNullOrEmpty(os), "app manifest os required");
+        checkArgument(!isNullOrEmpty(arch), "app manifest arch required");
 
         this.name = name;
         this.version = version;
@@ -127,7 +131,7 @@ public class AppManifest {
 
     public Map<String, String> getEnvironment() {
         if (environment == null) {
-            environment = new HashMap<>();
+            environment = Maps.newHashMap();
         }
         return environment;
     }
@@ -155,7 +159,7 @@ public class AppManifest {
 
     public Map<String, String> getAnnotations() {
         if (annotations == null) {
-            annotations = new HashMap<>();
+            annotations = Maps.newHashMap();
         }
         return annotations;
     }
@@ -190,13 +194,13 @@ public class AppManifest {
 
     @Override
     public String toString() {
-        return "AppManifest{" +
-                "acVersion='" + acVersion + '\'' +
-                ", acKind='" + acKind + '\'' +
-                ", name='" + name + '\'' +
-                ", version='" + version + '\'' +
-                ", os='" + os + '\'' +
-                ", arch='" + arch + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("acVersion", acVersion)
+                .add("acKind", acKind)
+                .add("name", name)
+                .add("version", version)
+                .add("os", os)
+                .add("arch", arch)
+                .toString();
     }
 }
