@@ -203,4 +203,15 @@ public class AppManifest {
                 .add("arch", arch)
                 .toString();
     }
+
+    public static final class OS {
+        public static final String LINUX = "linux";
+        // TODO more standards? (https://github.com/coreos/rocket/issues/234)
+    }
+
+    public static final class Arch {
+        public static final String AMD64 = "amd64";
+        public static final String I386 = "i386";
+        // TODO more standards? (https://github.com/coreos/rocket/issues/234)
+    }
 }

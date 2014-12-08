@@ -1,4 +1,4 @@
-package io.sarnowski.aci.builder;
+package io.sarnowski.aci.writer;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;

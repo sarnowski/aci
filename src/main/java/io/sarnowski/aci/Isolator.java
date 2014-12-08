@@ -56,4 +56,20 @@ public class Isolator {
                 .add("val", val)
                 .toString();
     }
+
+    public static final class Name {
+        public static final String CPU_SHARES = "cpu/shares/";
+
+        public static final String MEMORY_LIMIT = "memory/limit";
+
+        public static final String BLOCKIO_READ_BANDWITH = "blockIO/readBandwidth";
+        public static final String BLOCKIO_WRITE_BANDWITH = "blockIO/writeBandwidth";
+
+        public static final String NETWORKIO_READ_BANDWITH = "networkIO/readBandwidth";
+        public static final String NETWORKIO_WRITE_BANDWITH = "networkIO/writeBandwidth";
+
+        public static final String PRIVATE_NETWORK = "privateNetwork";
+
+        public static final String CAPABILITIES_BOUNDING_SET = "capabilities/boundingSet";
+    }
 }

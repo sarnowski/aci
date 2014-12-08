@@ -1,4 +1,4 @@
-package io.sarnowski.aci.builder;
+package io.sarnowski.aci.writer;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
