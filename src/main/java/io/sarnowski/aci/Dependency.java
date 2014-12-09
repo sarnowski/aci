@@ -3,15 +3,21 @@ package io.sarnowski.aci;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class Dependency {
-    @JsonProperty("hash")
-    private String hash;
-
     @JsonProperty("name")
     private String name;
+
+    @JsonProperty("labels")
+    private List<Label> labels;
+
+    @JsonProperty("hash")
+    private String hash;
 
     @JsonProperty("root")
     private String root;
@@ -19,22 +25,31 @@ public class Dependency {
     private Dependency() {
     }
 
-    public Dependency(final String hash, final String name, final String root) {
-        checkArgument(!isNullOrEmpty(hash), "dependency hash required");
+    public Dependency(final String name, final String root) {
         checkArgument(!isNullOrEmpty(name), "dependency name required");
         checkArgument(!isNullOrEmpty(root), "dependency root required");
 
-        this.hash = hash;
         this.name = name;
         this.root = root;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Label> getLabels() {
+        if (labels == null) {
+            labels = new ArrayList<>();
+        }
+        return labels;
     }
 
     public String getHash() {
         return hash;
     }
 
-    public String getName() {
-        return name;
+    public void setHash(final String hash) {
+        this.hash = hash;
     }
 
     public String getRoot() {
@@ -48,8 +63,8 @@ public class Dependency {
 
         final Dependency that = (Dependency) o;
 
-        if (!hash.equals(that.hash)) return false;
         if (!name.equals(that.name)) return false;
+        if (!hash.equals(that.hash)) return false;
         if (!root.equals(that.root)) return false;
 
         return true;
@@ -66,8 +81,9 @@ public class Dependency {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("hash", hash)
                 .add("name", name)
+                .add("labels", labels)
+                .add("hash", hash)
                 .add("root", root)
                 .toString();
     }

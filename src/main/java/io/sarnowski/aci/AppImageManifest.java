@@ -4,14 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-public class FilesetManifest {
+public class AppImageManifest {
     private static final String MANIFEST_VERSION = "0.1.0";
-    private static final String MANIFEST_KIND = "FilesetManifest";
+    private static final String MANIFEST_KIND = "ImageManifest";
 
     @JsonProperty("acVersion")
     private String acVersion = MANIFEST_VERSION;
@@ -22,17 +24,26 @@ public class FilesetManifest {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("labels")
+    private List<Label> labels;
+
+    @JsonProperty("app")
+    private App app;
+
     @JsonProperty("dependencies")
     private List<Dependency> dependencies;
 
-    @JsonProperty("files")
-    private List<String> files;
+    @JsonProperty("pathWhitelist")
+    private List<String> pathWhitelist;
 
-    private FilesetManifest() {
+    @JsonProperty("annotations")
+    private Map<String,String> annotations;
+
+    private AppImageManifest() {
     }
 
-    public FilesetManifest(final String name) {
-        checkArgument(!isNullOrEmpty(name), "fileset manifest name required");
+    public AppImageManifest(final String name) {
+        checkArgument(!isNullOrEmpty(name), "app manifest name required");
 
         this.name = name;
     }
@@ -49,6 +60,21 @@ public class FilesetManifest {
         return name;
     }
 
+    public List<Label> getLabels() {
+        if (labels == null) {
+            labels = new ArrayList<>();
+        }
+        return labels;
+    }
+
+    public App getApp() {
+        return app;
+    }
+
+    public void setApp(final App app) {
+        this.app = app;
+    }
+
     public List<Dependency> getDependencies() {
         if (dependencies == null) {
             dependencies = new ArrayList<>();
@@ -56,11 +82,18 @@ public class FilesetManifest {
         return dependencies;
     }
 
-    public List<String> getFiles() {
-        if (files == null) {
-            files = new ArrayList<>();
+    public List<String> getPathWhitelist() {
+        if (pathWhitelist == null) {
+            pathWhitelist = new ArrayList<>();
         }
-        return files;
+        return pathWhitelist;
+    }
+
+    public Map<String, String> getAnnotations() {
+        if (annotations == null) {
+            annotations = new HashMap<>();
+        }
+        return annotations;
     }
 
     @Override
@@ -68,10 +101,11 @@ public class FilesetManifest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final FilesetManifest that = (FilesetManifest) o;
+        final AppImageManifest that = (AppImageManifest) o;
 
         if (!acKind.equals(that.acKind)) return false;
         if (!acVersion.equals(that.acVersion)) return false;
+        if (labels != null ? !labels.equals(that.labels) : that.labels != null) return false;
         if (!name.equals(that.name)) return false;
 
         return true;
@@ -82,6 +116,7 @@ public class FilesetManifest {
         int result = acVersion.hashCode();
         result = 31 * result + acKind.hashCode();
         result = 31 * result + name.hashCode();
+        result = 31 * result + (labels != null ? labels.hashCode() : 0);
         return result;
     }
 
@@ -91,6 +126,7 @@ public class FilesetManifest {
                 .add("acVersion", acVersion)
                 .add("acKind", acKind)
                 .add("name", name)
+                .add("labels", labels)
                 .toString();
     }
 }

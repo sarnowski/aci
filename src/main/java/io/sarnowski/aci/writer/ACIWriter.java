@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
-import io.sarnowski.aci.AppManifest;
-import io.sarnowski.aci.FilesetManifest;
+import io.sarnowski.aci.AppImageManifest;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
@@ -19,47 +18,26 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ACIWriter {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final Charset MANIFEST_CHARSET = Charsets.UTF_8;
 
-    private final String name;
-    private final String version;
-
-    private AppManifest appManifest;
-    private FilesetManifest filesetManifest;
+    private final AppImageManifest appImageManifest;
 
     private List<Content> contents = new ArrayList<>();
-
     private ACICompression compression = ACICompression.GZIP;
-
     private boolean buffering = true;
 
-    private ACIWriter(final String name, final String version) {
-        checkArgument(!isNullOrEmpty(name), "image name required");
-        checkArgument(!isNullOrEmpty(version), "image version required");
-
-        this.name = name;
-        this.version = version;
+    private ACIWriter(final AppImageManifest appImageManifest) {
+        this.appImageManifest = appImageManifest;
     }
 
-    public static ACIWriter newImage(final String name, final String version) {
-        return new ACIWriter(name, version);
-    }
-
-    public ACIWriter withAppManifest(final AppManifest appManifest) {
-        checkNotNull(appManifest, "app manifest required");
-        this.appManifest = appManifest;
-        return this;
-    }
-
-    public ACIWriter withFilesetManifest(final FilesetManifest filesetManifest) {
-        checkNotNull(filesetManifest, "fileset manifest required");
-        this.filesetManifest = filesetManifest;
-        return this;
+    public static ACIWriter newImage(final AppImageManifest appImageManifest) {
+        checkNotNull(appImageManifest, "app image manifest required");
+        return new ACIWriter(appImageManifest);
     }
 
     public ACIWriter addContent(final Content content) {
@@ -106,9 +84,6 @@ public final class ACIWriter {
     }
 
     public String writeTo(final OutputStream outputStream) throws IOException {
-        checkState(appManifest != null || filesetManifest != null,
-                "neither AppManifest nor a FilesetManifest is given");
-
         final OutputStream bufferedOutputStream;
         if (buffering) {
             bufferedOutputStream = new BufferedOutputStream(outputStream);
@@ -125,28 +100,17 @@ public final class ACIWriter {
 
         final TarArchiveOutputStream imageOutputStream = new TarArchiveOutputStream(hashingOutputStream);
 
-        if (appManifest != null) {
-            final String appManifestJson = JSON_MAPPER.writeValueAsString(appManifest);
+        // add manifest
+        final String appManifestJson = JSON_MAPPER.writeValueAsString(appImageManifest);
 
-            final TarArchiveEntry appManifestEntry = new TarArchiveEntry("/app");
-            appManifestEntry.setSize(appManifestJson.length());
+        final TarArchiveEntry appManifestEntry = new TarArchiveEntry("/app");
+        appManifestEntry.setSize(appManifestJson.length());
 
-            imageOutputStream.putArchiveEntry(appManifestEntry);
-            imageOutputStream.write(appManifestJson.getBytes(MANIFEST_CHARSET));
-            imageOutputStream.closeArchiveEntry();
-        }
+        imageOutputStream.putArchiveEntry(appManifestEntry);
+        imageOutputStream.write(appManifestJson.getBytes(MANIFEST_CHARSET));
+        imageOutputStream.closeArchiveEntry();
 
-        if (filesetManifest != null) {
-            final String filesetManifestJson = JSON_MAPPER.writeValueAsString(filesetManifest);
-
-            final TarArchiveEntry filesetManifestEntry = new TarArchiveEntry("/fileset");
-            filesetManifestEntry.setSize(filesetManifestJson.length());
-
-            imageOutputStream.putArchiveEntry(filesetManifestEntry);
-            imageOutputStream.write(filesetManifestJson.getBytes(MANIFEST_CHARSET));
-            imageOutputStream.closeArchiveEntry();
-        }
-
+        // add content
         for (final Content content : contents) {
             content.addToImage(imageOutputStream);
         }

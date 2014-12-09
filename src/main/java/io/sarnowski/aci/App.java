@@ -12,17 +12,29 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class App {
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("exec")
+    private List<String> exec;
 
-    @JsonProperty("imageID")
-    private String imageID;
+    @JsonProperty("user")
+    private String user;
+
+    @JsonProperty("group")
+    private String group;
+
+    @JsonProperty("eventHandlers")
+    private List<EventHandler> eventHandlers;
+
+    @JsonProperty("environment")
+    private Map<String,String> environment;
 
     @JsonProperty("isolators")
     private List<Isolator> isolators;
 
-    @JsonProperty("annotations")
-    private Map<String,String> annotations;
+    @JsonProperty("mountPoints")
+    private List<MountPoint> mountPoints;
+
+    @JsonProperty("ports")
+    private List<Port> ports;
 
     private App() {
     }
